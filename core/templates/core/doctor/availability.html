@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Availability Schedule{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>My Availability Schedule</h2>
+    <a href="{% url 'doctor_availability_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Availability
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for availability in availabilities %}
+                    <tr>
+                        <td>{{ availability.get_day_of_week_display }}</td>
+                        <td>{{ availability.start_time }}</td>
+                        <td>{{ availability.end_time }}</td>
+                        <td>
+                            {% if availability.is_available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Unavailable</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
