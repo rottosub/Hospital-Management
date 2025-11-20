@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+
+{% block page_title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Book New Appointment</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.doctor.id_for_label }}" class="form-label">Doctor</label>
+                        {% render_field form.doctor class="form-select" %}
+                        {% if form.doctor.errors %}
+                            <div class="text-danger small">{{ form.doctor.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.appointment_date.id_for_label }}" class="form-label">Date</label>
+                            {% render_field form.appointment_date class="form-control" %}
+                            {% if form.appointment_date.errors %}
+                                <div class="text-danger small">{{ form.appointment_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.appointment_time.id_for_label }}" class="form-label">Time</label>
+                            {% render_field form.appointment_time class="form-control" %}
+                            {% if form.appointment_time.errors %}
+                                <div class="text-danger small">{{ form.appointment_time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.appointment_type.id_for_label }}" class="form-label">Appointment Type</label>
+                        {% render_field form.appointment_type class="form-select" %}
+                        {% if form.appointment_type.errors %}
+                            <div class="text-danger small">{{ form.appointment_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.reason.id_for_label }}" class="form-label">Reason</label>
+                        {% render_field form.reason class="form-control" rows="3" %}
+                        {% if form.reason.errors %}
+                            <div class="text-danger small">{{ form.reason.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'patient_appointments' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Book Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

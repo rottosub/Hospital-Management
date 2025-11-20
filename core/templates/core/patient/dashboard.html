@@ -1,0 +1,130 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Patient Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Upcoming Appointments</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_appointments %}
+                    <div class="list-group">
+                        {% for appointment in upcoming_appointments %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Dr. {{ appointment.doctor.get_full_name|default:appointment.doctor.username }}</h6>
+                                    <small class="text-muted">{{ appointment.appointment_date }} at {{ appointment.appointment_time }}</small>
+                                </div>
+                                <span class="badge badge-status-{{ appointment.status|lower }}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'patient_appointments' %}" class="btn btn-sm btn-outline-primary mt-3">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No upcoming appointments. <a href="{% url 'patient_appointment_create' %}">Book one now</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-receipt"></i> Pending Bills ({{ pending_bills|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_bills %}
+                    <div class="list-group">
+                        {% for bill in pending_bills %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Bill #{{ bill.id }}</h6>
+                                    <small class="text-muted">{{ bill.bill_date|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong>${{ bill.total_amount }}</strong>
+                                    <br>
+                                    <span class="badge badge-status-{{ bill.status|lower }}">
+                                        {{ bill.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'patient_bills' %}" class="btn btn-sm btn-outline-warning mt-3">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No pending bills.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-file-medical"></i> Recent Medical Records</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_records %}
+                    <div class="list-group">
+                        {% for record in recent_records %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ record.diagnosis|truncatewords:5 }}</h6>
+                                    <small class="text-muted">Dr. {{ record.doctor.get_full_name|default:record.doctor.username }} - {{ record.record_date|date:"M d, Y" }}</small>
+                                </div>
+                                <a href="{% url 'patient_medical_record_detail' record.id %}" class="btn btn-sm btn-primary">View</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'patient_medical_records' %}" class="btn btn-sm btn-outline-primary mt-3">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No medical records yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar"></i> Recent Appointments</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_appointments %}
+                    <div class="list-group">
+                        {% for appointment in recent_appointments %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Dr. {{ appointment.doctor.get_full_name|default:appointment.doctor.username }}</h6>
+                                    <small class="text-muted">{{ appointment.appointment_date }} - {{ appointment.get_appointment_type_display }}</small>
+                                </div>
+                                <span class="badge badge-status-{{ appointment.status|lower }}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'patient_appointments' %}" class="btn btn-sm btn-outline-primary mt-3">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No recent appointments.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

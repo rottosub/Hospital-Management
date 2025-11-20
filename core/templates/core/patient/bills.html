@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}My Bills{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>My Bills</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Remaining</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>#{{ bill.id }}</td>
+                        <td>{{ bill.bill_date|date:"M d, Y" }}</td>
+                        <td>${{ bill.total_amount }}</td>
+                        <td>${{ bill.paid_amount }}</td>
+                        <td>${{ bill.remaining_amount }}</td>
+                        <td>
+                            <span class="badge badge-status-{{ bill.status|lower }}">
+                                {{ bill.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'patient_bill_detail' bill.id %}" class="btn btn-sm btn-primary">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
