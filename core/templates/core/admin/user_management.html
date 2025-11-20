@@ -1,0 +1,69 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>User Management</h2>
+    <div>
+        <a href="?approved=pending" class="btn btn-warning btn-sm">Pending</a>
+        <a href="?approved=approved" class="btn btn-success btn-sm">Approved</a>
+        <a href="?" class="btn btn-secondary btn-sm">All</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Date Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.get_full_name|default:"-" }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge bg-info">{{ user.get_role_display }}</span></td>
+                        <td>
+                            {% if user.is_approved %}
+                                <span class="badge bg-success">Approved</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            {% if not user.is_approved %}
+                                <form method="post" action="{% url 'approve_user' user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                <form method="post" action="{% url 'approve_user' user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Reject</button>
+                                </form>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

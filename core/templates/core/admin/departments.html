@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Departments{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Departments</h2>
+    <a href="{% url 'department_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Department
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Head of Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for department in departments %}
+                    <tr>
+                        <td>{{ department.name }}</td>
+                        <td>
+                            {% if department.head_of_department %}
+                                Dr. {{ department.head_of_department.get_full_name|default:department.head_of_department.username }}
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'department_update' department.id %}" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="{% url 'department_delete' department.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
