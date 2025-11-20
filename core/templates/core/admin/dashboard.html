@@ -1,0 +1,185 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card card-stat">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Patients</h6>
+                        <h3 class="mb-0">{{ total_patients }}</h3>
+                    </div>
+                    <i class="bi bi-people fs-1 text-primary opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-stat">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Doctors</h6>
+                        <h3 class="mb-0">{{ total_doctors }}</h3>
+                    </div>
+                    <i class="bi bi-person-badge fs-1 text-success opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-stat">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pending Approvals</h6>
+                        <h3 class="mb-0 text-warning">{{ pending_approvals }}</h3>
+                    </div>
+                    <i class="bi bi-exclamation-triangle fs-1 text-warning opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card card-stat">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Today's Appointments</h6>
+                        <h3 class="mb-0">{{ today_appointments }}</h3>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1 text-info opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Low Stock Alerts ({{ low_stock|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% if low_stock %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Stock</th>
+                                    <th>Reorder Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in low_stock %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td><span class="badge bg-danger">{{ item.current_stock }} {{ item.unit }}</span></td>
+                                    <td>{{ item.reorder_level }} {{ item.unit }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{% url 'inventory_list' %}?low_stock=true" class="btn btn-sm btn-outline-danger">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No low stock items.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Pending User Approvals ({{ pending_users|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_users %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in pending_users %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td><span class="badge bg-secondary">{{ user.get_role_display }}</span></td>
+                                    <td>
+                                        <form method="post" action="{% url 'approve_user' user.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="approve">
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form method="post" action="{% url 'approve_user' user.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="reject">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{% url 'user_management' %}?approved=pending" class="btn btn-sm btn-outline-warning">View All</a>
+                {% else %}
+                    <p class="text-muted mb-0">No pending approvals.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Recent Appointments</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                            <tr>
+                                <td>{{ appointment.patient.get_full_name|default:appointment.patient.username }}</td>
+                                <td>Dr. {{ appointment.doctor.get_full_name|default:appointment.doctor.username }}</td>
+                                <td>{{ appointment.appointment_date }}</td>
+                                <td>{{ appointment.appointment_time }}</td>
+                                <td>
+                                    <span class="badge badge-status-{{ appointment.status|lower }}">
+                                        {{ appointment.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ appointment.get_appointment_type_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

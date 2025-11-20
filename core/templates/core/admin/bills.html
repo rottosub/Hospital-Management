@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Bills Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Bills</h2>
+    <a href="{% url 'bill_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create Bill
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover data-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>#{{ bill.id }}</td>
+                        <td>{{ bill.patient.get_full_name|default:bill.patient.username }}</td>
+                        <td>{{ bill.bill_date|date:"M d, Y" }}</td>
+                        <td>${{ bill.total_amount }}</td>
+                        <td>${{ bill.paid_amount }}</td>
+                        <td>
+                            <span class="badge badge-status-{{ bill.status|lower }}">
+                                {{ bill.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'bill_detail' bill.id %}" class="btn btn-sm btn-primary">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
