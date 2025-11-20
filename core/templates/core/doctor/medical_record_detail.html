@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block page_title %}Medical Record Detail{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Medical Record</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Patient:</dt>
+                    <dd class="col-sm-9">{{ record.patient.get_full_name|default:record.patient.username }}</dd>
+                    
+                    <dt class="col-sm-3">Date:</dt>
+                    <dd class="col-sm-9">{{ record.record_date|date:"M d, Y H:i" }}</dd>
+                    
+                    <dt class="col-sm-3">Diagnosis:</dt>
+                    <dd class="col-sm-9">{{ record.diagnosis }}</dd>
+                    
+                    {% if record.symptoms %}
+                    <dt class="col-sm-3">Symptoms:</dt>
+                    <dd class="col-sm-9">{{ record.symptoms }}</dd>
+                    {% endif %}
+                    
+                    <dt class="col-sm-3">Treatment Notes:</dt>
+                    <dd class="col-sm-9">{{ record.treatment_notes }}</dd>
+                </dl>
+                
+                <h5 class="mt-4">Vitals</h5>
+                <div class="row">
+                    {% if record.blood_pressure_systolic %}
+                    <div class="col-md-6 mb-2">
+                        <strong>Blood Pressure:</strong> {{ record.blood_pressure_systolic }}/{{ record.blood_pressure_diastolic }} mmHg
+                    </div>
+                    {% endif %}
+                    {% if record.temperature %}
+                    <div class="col-md-6 mb-2">
+                        <strong>Temperature:</strong> {{ record.temperature }}°F
+                    </div>
+                    {% endif %}
+                    {% if record.heart_rate %}
+                    <div class="col-md-6 mb-2">
+                        <strong>Heart Rate:</strong> {{ record.heart_rate }} bpm
+                    </div>
+                    {% endif %}
+                    {% if record.weight %}
+                    <div class="col-md-6 mb-2">
+                        <strong>Weight:</strong> {{ record.weight }} kg
+                    </div>
+                    {% endif %}
+                    {% if record.height %}
+                    <div class="col-md-6 mb-2">
+                        <strong>Height:</strong> {{ record.height }} cm
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if record.follow_up_required %}
+                <div class="alert alert-warning mt-3">
+                    <strong>Follow-up Required:</strong> {{ record.follow_up_date|date:"M d, Y"|default:"Date TBD" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Prescriptions</h5>
+                <a href="{% url 'add_prescription' record.id %}" class="btn btn-sm btn-primary">Add Prescription</a>
+            </div>
+            <div class="card-body">
+                {% if record.prescriptions.all %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Dosage</th>
+                                    <th>Frequency</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prescription in record.prescriptions.all %}
+                                <tr>
+                                    <td>{{ prescription.medicine_name }}</td>
+                                    <td>{{ prescription.dosage }}</td>
+                                    <td>{{ prescription.frequency }}</td>
+                                    <td>{{ prescription.duration }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No prescriptions added yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

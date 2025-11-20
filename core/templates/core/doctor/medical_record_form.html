@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+
+{% block page_title %}Create Medical Record{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Create Medical Record</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.patient.id_for_label }}" class="form-label">Patient</label>
+                        {% render_field form.patient class="form-select" %}
+                        {% if form.patient.errors %}
+                            <div class="text-danger small">{{ form.patient.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.diagnosis.id_for_label }}" class="form-label">Diagnosis</label>
+                        {% render_field form.diagnosis class="form-control" %}
+                        {% if form.diagnosis.errors %}
+                            <div class="text-danger small">{{ form.diagnosis.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.symptoms.id_for_label }}" class="form-label">Symptoms</label>
+                        {% render_field form.symptoms class="form-control" %}
+                        {% if form.symptoms.errors %}
+                            <div class="text-danger small">{{ form.symptoms.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.treatment_notes.id_for_label }}" class="form-label">Treatment Notes</label>
+                        {% render_field form.treatment_notes class="form-control" %}
+                        {% if form.treatment_notes.errors %}
+                            <div class="text-danger small">{{ form.treatment_notes.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <h5 class="mt-4 mb-3">Vitals</h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.blood_pressure_systolic.id_for_label }}" class="form-label">BP Systolic</label>
+                            {% render_field form.blood_pressure_systolic class="form-control" %}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.blood_pressure_diastolic.id_for_label }}" class="form-label">BP Diastolic</label>
+                            {% render_field form.blood_pressure_diastolic class="form-control" %}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.temperature.id_for_label }}" class="form-label">Temperature (°F)</label>
+                            {% render_field form.temperature class="form-control" %}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.heart_rate.id_for_label }}" class="form-label">Heart Rate</label>
+                            {% render_field form.heart_rate class="form-control" %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.weight.id_for_label }}" class="form-label">Weight (kg)</label>
+                            {% render_field form.weight class="form-control" %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.height.id_for_label }}" class="form-label">Height (cm)</label>
+                            {% render_field form.height class="form-control" %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {% render_field form.follow_up_required class="form-check-input" %}
+                            <label for="{{ form.follow_up_required.id_for_label }}" class="form-check-label">
+                                Follow-up Required
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3" id="follow-up-date" style="display: none;">
+                        <label for="{{ form.follow_up_date.id_for_label }}" class="form-label">Follow-up Date</label>
+                        {% render_field form.follow_up_date class="form-control" %}
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'doctor_medical_records' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Create Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('{{ form.follow_up_required.id_for_label }}').addEventListener('change', function() {
+        document.getElementById('follow-up-date').style.display = this.checked ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
+
